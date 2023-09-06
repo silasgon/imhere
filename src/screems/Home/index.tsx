@@ -1,4 +1,4 @@
-import { Text, View, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { Text, View, TextInput, TouchableOpacity, ScrollView, FlatList, Alert } from 'react-native';
 
 import { Participant } from "../../components/Participant";
 
@@ -9,11 +9,22 @@ export function Home() {
   const participants = ['Silas', 'Fernanda', 'Alice', 'Athos', 'Fofo', 'Vildon', 'Deusany', 'Deyce', 'Natan', 'Wolasse', 'Tuna', 'Alaídes', 'Divina', 'Anangelica', 'Lió']
 
   function handleParticipantAdd() {
-    console.log("Você clicou no botão de Adicionar!")
+    if (participants.includes("Silas")) {
+      return Alert.alert("Participante Existe", "Já existe um participante na lista com esse nome!")
+    }
   }
 
   function handleParticipantRemove(name: string) {
-    console.log(`Você clicou em remover o Participante! ${name}`);
+    Alert.alert("Remover", `Remover o participante ${name}?`, [
+      {
+        text: 'Sim',
+        onPress: () => Alert.alert("Deletado")
+      },
+      {
+        text: 'Não',
+        style: 'cancel'
+      }
+    ])
   }
 
   return (
@@ -37,13 +48,27 @@ export function Home() {
           </Text>
         </TouchableOpacity>
       </View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <FlatList
+        data={participants}
+        keyExtractor={item => item}
+        renderItem={({ item }) => (
+          <Participant key={item} name={item} onRemove={() => handleParticipantRemove(item)} />
+        )}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <Text style={styles.listEmptyText}>
+            Ninguém chegou ainda? Adicione participantes a sua lista de presença.
+          </Text>
+        )}
+      />
+
+      {/*       <ScrollView showsVerticalScrollIndicator={false}>
         {
           participants.map(participant => (
             <Participant key={participant} name={participant} onRemove={() => handleParticipantRemove(participant)} />
           ))
         }
-      </ScrollView>
+      </ScrollView> */}
 
     </View>
   );
